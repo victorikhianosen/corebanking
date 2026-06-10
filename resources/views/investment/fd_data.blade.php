@@ -352,10 +352,14 @@ Fixed Deposit Details
                                         @if ($fxd->status == 'approved')
                                         <a type="button" class="btn vd_btn vd_bg-googleplus vd_white btn-sm" href="javascript:void(0)"
                                         data-href="{{route('fdemail.offer',['id' => $fxd->id])}}" id="eminvest" title="Email Investment Letter">Email Investment Letter</a>
-
-                                     <a type="button" class="btn vd_btn vd_bg-blue vd_white btn-sm"
-                                         data-toggle="modal"
-                                        data-target="#signature" title="Print Investment Letter">{{$fxd->customer->last_name}} Investment Letter </a>
+<a 
+    onclick="printinv('{{ route('printfd.offer', ['id' => $fxd->id]) }}')"
+    class="btn vd_btn vd_bg-blue vd_white btn-sm"
+    style="cursor:pointer"
+    title="Print Investment Letter"
+>
+    {{$fxd->customer->last_name}} Investment Letter
+</a>
                                
                                         @endif
                                     
@@ -700,15 +704,9 @@ Fixed Deposit Details
         $("#overridebal").modal('show');
     }
     
-     function printinv(url){
-        signo=document.getElementById('signatureOne').value;
-        signt=document.getElementById('signatureTwo').value;
-        if(signo == "" && signt==""){
-            toastr.error('Please Enter Name of Signatory');
-        }else{
-            window.open(url+'?signone='+signo+'&signtwo='+signt, '_blank');
-        }
-    }
+    function printinv(url){
+    window.open(url, '_blank');
+}
     
     function manualrepay(url,scheid){
         $("#sche").modal('hide');
