@@ -1419,8 +1419,8 @@ class InvestmentController extends Controller
 
         $fxd = FixedDeposit::findOrFail($id);
 
-        $signatoryOne = asset('img/ayotunde_yusuf.png');
-        $signatoryTwo = asset('img/abiodun_shoyomi.png');
+        $signatoryOne = asset('img/moses_obazee.png');
+        $signatoryTwo = asset('img/ayotunde_yusuf.png');
 
         return view('investment.invest_letter')
             ->with('fd', $fxd)
@@ -1524,104 +1524,104 @@ class InvestmentController extends Controller
 
 
     public function email_investment_offer_letter($id)
-{
-    $branch = session()->has('branchid')
-        ? session()->get('branchid')['bid']
-        : null;
+    {
+        $branch = session()->has('branchid')
+            ? session()->get('branchid')['bid']
+            : null;
 
-    $getsetvalue = new Setting();
+        $getsetvalue = new Setting();
 
-    $fxd = FixedDeposit::findOrFail($id);
+        $fxd = FixedDeposit::findOrFail($id);
 
-    $customer = Customer::where('id', $fxd->customer_id)->first();
+        $customer = Customer::where('id', $fxd->customer_id)->first();
 
-    if (empty($customer->email)) {
+        if (empty($customer->email)) {
 
-        return [
-            'status' => 'false',
-            'msg' => 'Customer has no email set'
-        ];
-    }
+            return [
+                'status' => 'false',
+                'msg' => 'Customer has no email set'
+            ];
+        }
 
-    if ($customer->enable_email_alert != '1') {
+        if ($customer->enable_email_alert != '1') {
 
-        return [
-            'status' => 'false',
-            'msg' => 'Email is not enable for these customer'
-        ];
-    }
+            return [
+                'status' => 'false',
+                'msg' => 'Email is not enable for these customer'
+            ];
+        }
 
-    $body = "Dear ".$customer->last_name." ".$customer->first_name.",
+        $body = "Dear " . $customer->last_name . " " . $customer->first_name . ",
     <br>Please find attachment of your investment letter below.
     <br>Thank you.
-    <br>".Auth::user()->last_name." ".Auth::user()->first_name;
+    <br>" . Auth::user()->last_name . " " . Auth::user()->first_name;
 
-    $schedules = InvestmentSchedule::where('fixed_deposit_id', $id)
-                    ->orderBy('due_date', 'asc')
-                    ->get();
+        $schedules = InvestmentSchedule::where('fixed_deposit_id', $id)
+            ->orderBy('due_date', 'asc')
+            ->get();
 
-    $data = [
-        'title' => $getsetvalue->getsettingskey('company_name')." Investment Letter",
-        'date' => date('m/d/Y'),
-        'fd' => $fxd,
-        'schedules' => $schedules,
-        'custm' => $customer,
-        'email' => '1',
+        $data = [
+            'title' => $getsetvalue->getsettingskey('company_name') . " Investment Letter",
+            'date' => date('m/d/Y'),
+            'fd' => $fxd,
+            'schedules' => $schedules,
+            'custm' => $customer,
+            'email' => '1',
 
-        // IMPORTANT
-        'signatoryOne' => public_path('img/ayotunde_yusuf.png'),
-        'signatoryTwo' => public_path('img/abiodun_shoyomi.png'),
-    ];
+            // IMPORTANT
+            'signatoryOne' => public_path('img/moses_obazee.png'),
+                        'signatoryTwo' => public_path('img/ayotunde_yusuf.png'),
+        ];
 
-    $pdf = PDF::loadView(
-        "investment.email_investment_letter",
-        $data
-    );
+        $pdf = PDF::loadView(
+            "investment.email_investment_letter",
+            $data
+        );
 
-    $filename = time().'_investment_letter.pdf';
+        $filename = time() . '_investment_letter.pdf';
 
-    file_put_contents($filename, $pdf->output());
+        file_put_contents($filename, $pdf->output());
 
-    Mail::send(
-        ['html' => 'mails.sendmail'],
-        [
-            'msg' => $body,
-            'type' => "investment letter"
-        ],
-        function($mail) use (
-            $customer,
-            $getsetvalue,
-            $filename
-        ){
+        Mail::send(
+            ['html' => 'mails.sendmail'],
+            [
+                'msg' => $body,
+                'type' => "investment letter"
+            ],
+            function ($mail) use (
+                $customer,
+                $getsetvalue,
+                $filename
+            ) {
 
-            $mail->from(
-                $getsetvalue->getsettingskey('company_email'),
-                ucwords($getsetvalue->getsettingskey('company_name'))
-            );
+                $mail->from(
+                    $getsetvalue->getsettingskey('company_email'),
+                    ucwords($getsetvalue->getsettingskey('company_name'))
+                );
 
-            $mail->to($customer->email);
+                $mail->to($customer->email);
 
-            $mail->subject("investment letter");
+                $mail->subject("investment letter");
 
-            $mail->attach($filename);
-        }
-    );
+                $mail->attach($filename);
+            }
+        );
 
-    unlink($filename);
+        unlink($filename);
 
-    Email::create([
-        'user_id' => Auth::user()->id,
-        'branch_id' => $branch,
-        'subject' => "investment letter",
-        'message' => $body,
-        'recipient' => $customer->email,
-    ]);
+        Email::create([
+            'user_id' => Auth::user()->id,
+            'branch_id' => $branch,
+            'subject' => "investment letter",
+            'message' => $body,
+            'recipient' => $customer->email,
+        ]);
 
-    return [
-        'status' => 'success',
-        'msg' => 'Investment letter successfully sent'
-    ];
-}
+        return [
+            'status' => 'success',
+            'msg' => 'Investment letter successfully sent'
+        ];
+    }
 
     public function fdliquidation()
     {

@@ -8,7 +8,7 @@
     <!-- Theme style -->
     <link rel="stylesheet" href="{{ asset('assets/dist/css/AdminLTE.min.css') }}">
     <style type="text/css" media="print">
-        @page {
+        @page { 
             size: auto;
             /* auto is the initial value */
             margin: 0mm;
@@ -305,6 +305,16 @@
 </head>
 
 <body>
+
+    <div style="width:100%; text-align:center; margin-bottom:10px;">
+
+    
+        <img src="{{ asset('img/rgheader.jpeg') }}"
+     alt="Header"
+     style="width:100%; height:auto;">
+
+    </div>
+    
     <?php
     $getsetvalue = new \App\Models\Setting();
     $currcy = DB::table('exchangerates')->select('currency_symbol')->where('id', $fd->customer->exchangerate_id)->first();
@@ -313,7 +323,8 @@
     <div>
 
         <div class="row invoice-info" style="width:80%; margin:auto;">
-            <div class="container" style="text-align:justify;margin-top:240px !important;font-size:22px">
+            <div class="container" style="">
+                <div class="container" style="text-align:justify;margin-top:20px !important;font-size:22px">
                 <div style="margin-left: 15px;font-style:normal">
                     <strong>Generated Date: </strong> &nbsp; &nbsp; &nbsp; {{ date('d-m-Y') }}<br>
                     <strong> Customer Name: </strong>&nbsp;&nbsp;&nbsp;
@@ -475,25 +486,24 @@
 
                 <div style="display:flex; justify-content:space-between; margin-top:40px;">
 
-                    <div style="text-align:center; width:300px;">
-                        <img src="{{ $signatoryOne }}" width="180" style="background:transparent;">
+                  <div style="text-align:center; width:300px;">
+    <img src="{{ asset('img/moses_obazee.png') }}" width="180">
+    <div style="border-bottom:2px solid #000; width:220px; margin:5px auto 10px auto;"></div>
 
-                        <div style="border-bottom:2px solid #000; width:220px; margin:5px auto 10px auto;"></div>
+    <strong>Moses Obazee</strong>
+    <br>
+    Authorised Signatory
+</div>
 
-                        <strong>Ayotunde Yusuf</strong>
-                        <br>
-                        Authorised Signatory
-                    </div>
 
-                    <div style="text-align:center; width:300px;">
-                        <img src="{{ $signatoryTwo }}" width="180" style="background:transparent;">
+                  <div style="text-align:center; width:300px;">
+    <img src="{{ asset('img/ayotunde_yusuf.png') }}" width="180">
+    <div style="border-bottom:2px solid #000; width:220px; margin:5px auto 10px auto;"></div>
 
-                        <div style="border-bottom:2px solid #000; width:220px; margin:5px auto 10px auto;"></div>
-
-                        <strong>Abiodun Shoyomi</strong>
-                        <br>
-                        Authorised Signatory
-                    </div>
+    <strong>Ayotunde Yusuf</strong>
+    <br>
+    Authorised Signatory
+</div>
 
                 </div>
 
