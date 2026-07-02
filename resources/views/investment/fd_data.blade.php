@@ -476,7 +476,6 @@ Fixed Deposit Details
                                     </tr>
                                     <tr>
                                         <td>
-                                            <b>Investment interest</b>
                                         </td>
                                         <td>{{$fxd->interest_rate}}% / {{$fxd->interest_period}}
                                         </td>

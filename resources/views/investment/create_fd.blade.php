@@ -93,7 +93,6 @@ Create Fixed Deposit
                             <div class="col-sm-6">
                                 <select class="form-control width-90" name="duration_type" required="required" id="ldurationtyp">
                                   <option selected disabled>Select</option>
-                                   <option value="days">Day(s)</option>
                                     <option value="month">Month(s)</option>
                                     <option value="year">Year(s)</option>
                                   </select>
@@ -108,10 +107,9 @@ Create Fixed Deposit
                         <label class="col-sm-4 control-label">Payment Cycle</label>
                         <div class="col-sm-7 controls">
                             <select class="form-control width-70"  required="required" id="" name="payment_cycle">
-                               <option value="daily">Daily</option>
                                 <option value="monthly">Monthly</option>
                                 <option value="quarterly">Quarterly</option>
-                                <option value="semi_annual">Semi-Annual</option>
+                                <option value="semi_annually">Semi-Annual</option>
                                 <option value="annually">Annually</option>
                             </select>                       
                              </div>
@@ -154,10 +152,30 @@ Create Fixed Deposit
                                 <input class="width-70 form-control" name="interest_rate" id="linterest" required="required" value="{{old('interest_rate')}}" step=".01"  type="number" >
                             </div>
                             <div class="col-sm-6">
-                                <select class="form-control width-90" name="interest_period" required="required" id="period">
-                                    <option value="month">Month(s)</option>
-                                    <option value="year">Year(s)</option></select>
+                                {{-- 
+                                    FIX: Interest period is now ALWAYS stored as 'year'.
+                                    This prevents the data-entry mistake where a user selects
+                                    'month' for a rate that is actually a per-year figure,
+                                    which previously caused interest to be inflated 12×.
+                                    The calculation engine in fd_determine_interest_rate()
+                                    divides the annual rate by 12 for monthly payments,
+                                    giving the correct per-month amount.
+                                --}}
+                                <input type="hidden" name="interest_period" value="year">
+                                <div class="form-control width-90" style="background:#f5f5f5; padding-top:7px;">
+                                    Per Year (Annual Rate)
+                                </div>
                             </div>
+                        </div>
+                        <div class="col-sm-offset-4 col-sm-7" style="margin-top:5px;">
+                            <small class="text-muted">
+                                <i class="fa fa-info-circle"></i>
+                                Enter the annual interest rate. The system automatically calculates
+                                the correct per-period amount based on the payment cycle selected above.
+                                <br>
+                                <strong>Example:</strong> 36% per year with Monthly payment cycle
+                                = 3% per month (₦ rate × 3%).
+                            </small>
                         </div>
                       </div>
 
@@ -210,29 +228,6 @@ Create Fixed Deposit
   </div>
 @endsection
 @section('scripts')
-<script>
-//     function submitloan(){
-//         let prinpal = $(".princi").val();
-//         let maxamt = $(".maxprincipal").val();
-//         let minamt = $(".minprincipal").val();
-        
-//         if(document.getElementById('acno1').value == ""){
-//           toastr.error('Please enter customer account number to continue');
-//          }else if(parseInt(prinpal) > parseInt(maxamt)){
-//             let mxnm =  Number(maxamt).toLocaleString('en');
-//             toastr.error('Maximum Principal amount exceeded '+mxnm);
-//         }else if(parseInt(prinpal) < parseInt(minamt)){
-//             let minm =  Number(minamt).toLocaleString('en');
-//             toastr.error('Minimum Principal amount allowed '+minm);
-//         }else if(document.getElementById('acbal').value <= 0 || document.getElementById('acbal').value < parseInt(prinpal)){
-//           toastr.error('insuffient balance...please credit customer account to continue');
-//         }else{
-//           $("#btnssubmit").attr('disabled',true);
-//           $("#btnssubmit").text('Please Wait...');
-//             document.getElementById('submitloan').submit();
-//         }
-//     }
-</script>
 <script>
   $(document).ready(function(){
     $("#ro").select2();
@@ -336,15 +331,9 @@ Create Fixed Deposit
           $("#lduration").val(data.duration);
           $("#linterest").val(data.interestrate);
           
-          let p = document.getElementById("period");
           let dtyp = document.getElementById("ldurationtyp");
           let im = document.getElementById("interest_method");
           
-          for(i=0; i < p.length; i++){
-              if(p.options[i].value == data.interestperiod){
-                  p.options[i].selected = true;
-              }
-          }
           for(i=0; i < dtyp.length; i++){
               if(dtyp.options[i].value == data.durtype){
                   dtyp.options[i].selected = true;
@@ -355,7 +344,7 @@ Create Fixed Deposit
                   im.options[i].selected = true;
               }
           }
-          
+          // Note: interest_period is now always 'year' (hidden field), no need to set it
           }
         },
         error:function(xhr,status,errorThrown){

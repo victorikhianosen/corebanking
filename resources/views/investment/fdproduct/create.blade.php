@@ -37,9 +37,9 @@ Create Fixed Deposit Product
                         <div class="col-sm-7 controls">
                           <select class="form-control width-70 selgl" autocomplete="off" name="product_gl_type">
                             <option disabled selected>--Select--</option>
-                          @foreach ($asstsgl as $item)
+                          {{-- @foreach ($asstsgl as $item)
                                <option value="{{$item->gl_code}}">{{ucwords($item->gl_name)." [".$item->gl_code."]"}}</option>
-                            @endforeach
+                            @endforeach --}}
                           </select>
                         </div>
                       </div>
